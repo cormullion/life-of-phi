@@ -1,32 +1,30 @@
-philist = Array[
-["\\textphi",         "LATIN SMALL LETTER PHI"],
-["\\Phi",             "GREEK CAPITAL LETTER PHI"],
-["\\varphi",          "GREEK SMALL LETTER PHI for Greek text, and Maths prefers this loopy glyph"],
-["\\phi",             "GREEK PHI SYMBOL used as a technical symbol, with a stroked glyph"],
-["\\^phi",            "MODIFIER LETTER SMALL GREEK PHI"],
-["\\_phi",            "GREEK SUBSCRIPT SMALL LETTER PHI"],
-["\\^Phi",            "MODIFIER LETTER SMALL PHI"],
-["\\mbfPhi",          "MATHEMATICAL BOLD CAPITAL PHI"],
-["\\mbfvarphi",       "MATHEMATICAL BOLD SMALL PHI"],
-["\\mbfphi",          "MATHEMATICAL BOLD PHI SYMBOL"],
-["\\mitPhi",          "MATHEMATICAL ITALIC CAPITAL PHI"],
-["\\mitphi",          "MATHEMATICAL ITALIC SMALL PHI"],
-["\\mitvarphi",       "MATHEMATICAL ITALIC PHI SYMBOL"],
-["\\mbfitphi",        "MATHEMATICAL BOLD ITALIC SMALL PHI"],
-["\\mbfitvarphi",     "MATHEMATICAL BOLD ITALIC PHI SYMBOL"],
-["\\mbfsansphi",      "MATHEMATICAL SANS-SERIF BOLD SMALL PHI"],
-["\\mbfsansvarphi",   "MATHEMATICAL SANS-SERIF BOLD PHI SYMBOL"],
-["\\mbfitsansPhi",    "MATHEMATICAL SANS-SERIF BOLD ITALIC CAPITAL PHI"],
-["\\mbfitsansphi",    "MATHEMATICAL SANS-SERIF BOLD ITALIC SMALL PHI"],
-["\\mbfitsansvarphi", "MATHEMATICAL SANS-SERIF BOLD ITALIC PHI SYMBOL"]]
+using DataFrames
 
-begin
-    println("Phi", "\t", join(rpad.(["LATEX", "UNICODE", "UNICODE DESCRIPTION"], [20, 10, 100])))
-    for (n, s) in enumerate(philist)
-        phisymbol = Base.REPLCompletions.latex_symbols[s[1]]
-        latexkb = s[1]
-        hexchar = hex(Base.REPLCompletions.latex_symbols[s[1]][1])
-        unicodename = philist[n][2]
-        println(phisymbol, "\t", join(rpad.([latexkb, hexchar, unicodename], [20, 10, 100])))
-    end
+df = DataFrame(unicodepoint=Int64[], unicodepointhex=String[], unicodechar=String[], latexcompletion=String[], desc=String[])
+
+for i in (
+    [0x00278, "ɸ", "\\ltphi", "Latin Small Letter Phi"] ,
+    [0x003C6, "φ", "\\varphi", "Greek Small Letter Phi"] ,
+    [0x003D5, "ϕ", "\\phi", "Greek Phi Symbol / Greek Small Letter Script Phi"] ,
+    [0x01D60, "ᵠ", "\\^phi", "Modifier Letter Small Greek Phi"] ,
+    [0x01D69, "ᵩ", "\\_phi", "Greek Subscript Small Letter Phi"] ,
+    [0x1D6D7, "𝛗", "\\bfvarphi", "Mathematical Bold Small Phi"] ,
+    [0x1D6DF, "𝛟", "\\bfphi", "Mathematical Bold Phi Symbol"] ,
+    [0x1D711, "𝜑", "\\itphi", "Mathematical Italic Small Phi"] ,
+    [0x1D719, "𝜙", "\\itvarphi", "Mathematical Italic Phi Symbol"] ,
+    [0x1D74B, "𝝋", "\\biphi", "Mathematical Bold Italic Small Phi"] ,
+    [0x1D753, "𝝓", "\\bivarphi", "Mathematical Bold Italic Phi Symbol"] ,
+    [0x1D785, "𝞅", "\\bsansphi", "Mathematical Sans-Serif Bold Small Phi"] ,
+    [0x1D78D, "𝞍", "\\bsansvarphi", "Mathematical Sans-Serif Bold Phi Symbol"] ,
+    [0x1D7BF, "𝞿", "\\bisansphi", "Mathematical Sans-Serif Bold Italic Small Phi"] ,
+    [0x1D7C7, "𝟇", "\\bisansvarphi", "Mathematical Sans-Serif Bold Italic Phi Symbol"])
+    push!(df, (i[1], string(i[1], base=16), string(Char(i[1])), i[3], i[4]))
+end
+
+@show df
+
+using REPL
+
+for lc in df[:latexcompletion]
+    println("Type ", lc, " to get ", REPL.REPLCompletions.latex_symbols[lc])
 end
